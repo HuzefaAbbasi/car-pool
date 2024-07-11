@@ -1,16 +1,58 @@
 import Header from "../components/header";
-import { View, StyleSheet, ScrollView, Text } from "react-native";
+import { View, StyleSheet, ScrollView, Text, Alert } from "react-native";
 import RideCard from "../components/card";
+import { useAuth } from "../AuthContext";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function UserProfile({ navigation }) {
+  const { user, token } = useAuth();
+  const [rides, setRides] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        "https://carpool.qwertyexperts.com/api/posts/list",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            userId: user._id,
+          },
+        }
+      );
+      const data = response.data.result.data;
+      setRides(data);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "Some error occured");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [rides]);
+
   return (
     <View style={styles.container}>
       <Header title={"Profile"} />
       <View style={{ padding: 16 }}>
-        <Text style={styles.heading}>Details</Text>
-        <Text style={styles.details}>Name: Ali Ahmad</Text>
-        <Text style={styles.details}>Email: ali@gmail.com</Text>
-        <Text style={styles.details}>Phone number: +923456789</Text>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={styles.heading}>Details</Text>
+          <Text
+            onPress={() => navigation.navigate("ChangePassword")}
+            style={{ color: "#0075FD", fontWeight: "500" }}
+          >
+            Change Password
+          </Text>
+        </View>
+
+        <Text style={styles.details}>
+          Name: {user.firstName} {user.lastName}{" "}
+        </Text>
+        <Text style={styles.details}>Email: {user.email}</Text>
+
         <View
           style={{
             flexDirection: "row",
@@ -28,11 +70,27 @@ export default function UserProfile({ navigation }) {
         </View>
       </View>
       <ScrollView>
-        <RideCard />
-        <RideCard />
-        <RideCard />
-        <RideCard />
-        <RideCard />
+        {rides &&
+          rides.map((ride) => {
+            if (ride.userId._id == user._id) {
+              return (
+                <RideCard
+                  key={ride._id}
+                  name={ride.userId.firstName}
+                  to={ride.to}
+                  from={ride.from}
+                  vehicleType={ride.vehicleType}
+                  departureTime={ride.departuteTime}
+                  arrivalTime={ride.arrivalTime}
+                  totalSeats={ride.totalSeats}
+                  availableSeats={ride.availableSeats}
+                  id={ride._id}
+                />
+              );
+            } else {
+              return null;
+            }
+          })}
       </ScrollView>
     </View>
   );

@@ -1,18 +1,23 @@
 import { Image, StyleSheet, View } from "react-native";
 import { useEffect } from "react";
+import { useAuth } from "../AuthContext";
 
 export default function SplashScreen({ navigation }) {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      navigation.replace("Login");
-    }, 2000);
+  const { token, loading } = useAuth();
 
-    return () => clearTimeout(timer);
-  }, [navigation]);
+  useEffect(() => {
+    if (!loading) {
+      if (token) {
+        navigation.replace("BottomNavigation");
+      } else {
+        navigation.replace("Login");
+      }
+    }
+  }, [loading, token]);
 
   return (
     <View style={styles.container}>
-      <Image source={require("../assets/carpool-logo.png")}></Image>
+      <Image source={require("../assets/carpool-logo.png")} />
     </View>
   );
 }

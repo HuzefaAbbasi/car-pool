@@ -1,70 +1,147 @@
-import { View, Text, Dimensions, StyleSheet } from "react-native";
-const { width, height } = Dimensions.get("window");
+import React from "react";
+import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
+import { Formik } from "formik";
+import * as Yup from "yup";
 import LabelWithField from "../components/label-with-field";
 import TextButton from "../components/text-button";
 import SizedBox from "../components/sizedbox";
-import Icon from "react-native";
+import Header from "../components/header";
+import TimePickerInput from "../components/timepicker";
+import axios from "axios";
+import { useAuth } from "../AuthContext";
+import { format } from "date-fns";
+
+const { height } = Dimensions.get("window");
+
+const RideSchema = Yup.object().shape({
+  from: Yup.string().required("Starting location is required"),
+  to: Yup.string().required("Destination location is required"),
+  departureTime: Yup.date().required("Departure time is required"),
+  arrivalTime: Yup.date().required("Arrival time is required"),
+  vehicleType: Yup.string().required("Vehicle type is required"),
+  totalSeats: Yup.number()
+    .min(1, "Total seats must be at least 1")
+    .required("Total seats are required"),
+});
 
 export default function CreateRide({ navigation }) {
+  const { token } = useAuth();
+  const handleCreateRide = async (values) => {
+    try {
+      const formattedValues = {
+        ...values,
+        departureTime: format(new Date(values.departureTime), "hh:mma"),
+        arrivalTime: format(new Date(values.arrivalTime), "hh:mma"),
+      };
+      console.log(formattedValues);
+      const response = await axios.post(
+        "https://carpool.qwertyexperts.com/api/posts",
+        formattedValues,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Success:", response.data);
+      navigation.navigate("UserProfile");
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <SizedBox height={height * 0.04} />
-      <Text style={styles.heading}>Create A Ride</Text>
-      <View style={{ alignContent: "center" }}>
-        <LabelWithField
-          label={"From"}
-          placeholder={"Choose Starting Location"}
-          icon={"location-dot"}
-        ></LabelWithField>
-        <LabelWithField
-          label={"To"}
-          placeholder={"Enter Destination Location"}
-          icon={"location-crosshairs"}
-        ></LabelWithField>
-        <LabelWithField
-          label={"Time"}
-          placeholder={"Enter Starting Time"}
-          icon={"clock"}
-        ></LabelWithField>
-        <LabelWithField
-          label={"Vehicle"}
-          placeholder={"Enter Vehicle Name"}
-          icon={"car"}
-        ></LabelWithField>
-        <LabelWithField
-          label={"Total Seats"}
-          placeholder={"Enter Number of total Seats"}
-          icon={"car-seat"}
-        ></LabelWithField>
-        <LabelWithField
-          label={"Vehicle"}
-          placeholder={"Enter Number of availaible Seats"}
-          icon={"car-seat"}
-        ></LabelWithField>
-        <SizedBox height={height * 0.02} />
-      </View>
-      <TextButton
-        text={"Create a Ride"}
-        color={"#0075FD"}
-        textColor={"#fff"}
-        onPress={() => {
-          //   navigation.navigate("VerifyEmail");
+      <Header title={"Create A Ride"} />
+      <Formik
+        initialValues={{
+          from: "",
+          to: "",
+          departureTime: null,
+          arrivalTime: null,
+          vehicleType: "",
+          totalSeats: "",
         }}
-      ></TextButton>
-      <View style={styles.footer}>
-        <Text style={{ color: "#8E8E8E", fontSize: 14 }}>
-          Already have an account?
-        </Text>
-        <Text
-          onPress={() => {
-            navigation.navigate("Login");
-          }}
-          style={{ color: "#054BB4", fontSize: 14 }}
-        >
-          {"  "}
-          Login
-        </Text>
-      </View>
+        validationSchema={RideSchema}
+        onSubmit={handleCreateRide}
+      >
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          setFieldValue,
+          values,
+          errors,
+          touched,
+        }) => (
+          <>
+            <ScrollView style={{ height: height * 0.58 }}>
+              <LabelWithField
+                label={"From"}
+                placeholder={"Choose Starting Location"}
+                icon={"location-dot"}
+                value={values.from}
+                onChangeText={handleChange("from")}
+                onBlur={handleBlur("from")}
+                error={errors.from}
+                touched={touched.from}
+              />
+              <LabelWithField
+                label={"To"}
+                placeholder={"Enter Destination Location"}
+                icon={"location-crosshairs"}
+                value={values.to}
+                onChangeText={handleChange("to")}
+                onBlur={handleBlur("to")}
+                error={errors.to}
+                touched={touched.to}
+              />
+              <TimePickerInput
+                label={"Departure Time"}
+                value={values.departureTime}
+                onChange={(time) => setFieldValue("departureTime", time)}
+                onBlur={handleBlur("departureTime")}
+              />
+              <TimePickerInput
+                label={"Arrival Time"}
+                value={values.arrivalTime}
+                onChange={(time) => setFieldValue("arrivalTime", time)}
+                onBlur={handleBlur("arrivalTime")}
+              />
+              <LabelWithField
+                label={"Vehicle Type"}
+                placeholder={"Enter Vehicle Type"}
+                icon={"car"}
+                value={values.vehicleType}
+                onChangeText={handleChange("vehicleType")}
+                onBlur={handleBlur("vehicleType")}
+                error={errors.vehicleType}
+                touched={touched.vehicleType}
+              />
+              <LabelWithField
+                label={"Total Seats"}
+                placeholder={"Enter Number of total Seats"}
+                icon={"car-seat"}
+                value={values.totalSeats}
+                onChangeText={handleChange("totalSeats")}
+                onBlur={handleBlur("totalSeats")}
+                error={errors.totalSeats}
+                touched={touched.totalSeats}
+                keyboardType={"numeric"}
+              />
+            </ScrollView>
+
+            <SizedBox height={height * 0.02} />
+            <TextButton
+              text={"Create a Ride"}
+              color={"#0075FD"}
+              textColor={"#fff"}
+              onPress={handleSubmit}
+            />
+          </>
+        )}
+      </Formik>
     </View>
   );
 }
@@ -75,16 +152,10 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#fff",
   },
-  heading: {
-    fontWeight: "700",
-    fontSize: 20,
-    fontFamily: "monospace",
-    marginBottom: 16,
-  },
-
   footer: {
     flexDirection: "row",
     justifyContent: "center",
     flex: 1,
+    marginBottom: 20,
   },
 });

@@ -17,6 +17,7 @@ import AllChats from "./screens/allchats";
 import Home from "./screens/home";
 import UserProfile from "./screens/user-profile";
 import Requests from "./screens/authentication/requests";
+import { AuthProvider } from "./AuthContext";
 
 function BottomNavigation() {
   const Tab = createBottomTabNavigator();
@@ -69,9 +70,7 @@ function MyStack() {
       <Stack.Screen name="Signup" component={SignUp} />
       <Stack.Screen name="VerifyEmail" component={VerifyEmail} />
       <Stack.Screen name="SplashScreen" component={SplashScreen} />
-      <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="UserProfile" component={UserProfile} />
-      <Stack.Screen name="AllChats" component={AllChats} />
+
       <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
 
       <Stack.Screen
@@ -92,9 +91,12 @@ function MyStack() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <MyStack />
-    </NavigationContainer>
+    // to manage token and user, by using AuthProvider we can access token and user in any component
+    <AuthProvider>
+      <NavigationContainer>
+        <MyStack />
+      </NavigationContainer>
+    </AuthProvider>
   );
 }
 

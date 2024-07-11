@@ -25,77 +25,12 @@ export default function AllChats({ navigation }) {
       <SearchBar placeholder={"Search Chat"} icon={"search"} />
       <ScrollView style={{ flex: 1 }}>
         <ChatItem
-          name="Ali"
-          lastMessage={"hi, how are you?"}
+          name="Ahmad"
+          lastMessage={"hi"}
           time={"5:06 pm"}
           navigation={navigation}
         ></ChatItem>
-        <ChatItem
-          name="Ali"
-          lastMessage={"hi, how are you?"}
-          time={"5:06 pm"}
-          navigation={navigation}
-        ></ChatItem>
-        <ChatItem
-          name="Ali"
-          lastMessage={"hi, how are you?"}
-          time={"5:06 pm"}
-          navigation={navigation}
-        ></ChatItem>
-        <ChatItem
-          name="Ali"
-          lastMessage={"hi, how are you?"}
-          time={"5:06 pm"}
-          navigation={navigation}
-        ></ChatItem>
-        <ChatItem
-          name="Ali"
-          lastMessage={"hi, how are you?"}
-          time={"5:06 pm"}
-          navigation={navigation}
-        ></ChatItem>
-        <ChatItem
-          name="Ali"
-          lastMessage={"hi, how are you?"}
-          time={"5:06 pm"}
-          navigation={navigation}
-        ></ChatItem>
-        <ChatItem
-          name="Ali"
-          lastMessage={"hi, how are you?"}
-          time={"5:06 pm"}
-          navigation={navigation}
-        ></ChatItem>
-        <ChatItem
-          name="Ali"
-          lastMessage={"hi, how are you?"}
-          time={"5:06 pm"}
-          navigation={navigation}
-        ></ChatItem>
-        <ChatItem
-          name="Ali"
-          lastMessage={"hi, how are you?"}
-          time={"5:06 pm"}
-          navigation={navigation}
-        ></ChatItem>
-        <ChatItem
-          name="Ali"
-          lastMessage={"hi, how are you?"}
-          time={"5:06 pm"}
-          navigation={navigation}
-        ></ChatItem>
-        <ChatItem
-          name="Ali"
-          lastMessage={"hi, how are you?"}
-          time={"5:06 pm"}
-          navigation={navigation}
-        ></ChatItem>
-        <ChatItem
-          name="Ali"
-          lastMessage={"hi, how are you?"}
-          time={"5:06 pm"}
-          navigation={navigation}
-        ></ChatItem>
+      
       </ScrollView>
     </View>
   );

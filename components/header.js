@@ -7,7 +7,7 @@ export default function Header({ title, text }) {
       <Image
         source={require("../assets/carpool-logo.png")}
         style={{
-          marginTop: 40,
+          marginTop: 20,
           width: 240,
           height: 60,
           marginBottom: 20,

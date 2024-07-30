@@ -1,4 +1,4 @@
-Car-Pool
+# Car-Pool
 
 Developed a carpool application in React Native Expo with authentication, ride booking, ride creation, and chat features. Integrated APIs for seamless functionality.
 
